@@ -1,3 +1,6 @@
+# IMPORTANT NOTICE
+Documentation, both user and technical is heavily outdated and will be fixed in the future.
+
 # Project Overview
 
 **Naps** (also referred to as naps or just Plugin) is a plugin for the trace-cmd data visualiser KernelShark. Nap, in
