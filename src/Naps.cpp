@@ -64,7 +64,6 @@ static void config_show([[maybe_unused]] KsMainWindow*) {
     cfg_window->show();
 }
 
-#ifndef _UNMODIFIED_KSHARK // Task coloring
 /**
  * @brief Gets the color of the task used by KernelShark for that task.
  * Used during nap rectangle creation to figure out the outline of the rectangle.alignas
@@ -96,7 +95,6 @@ static const KsPlot::Color _get_task_color(int pid) {
 
     return result_color;
 }
-#endif
 
 /**
  * @brief Returns either black if the background color's intensity is too great,
@@ -212,12 +210,10 @@ static NapRectangle* _make_nap_rect(std::vector<const KsPlot::Graph*> graph,
     // Prepare outline color
     KsPlot::Color outline_col = rect._color;
     
-#ifndef _UNMODIFIED_KSHARK // Task coloring
     // Configuration access here.
     if(NapConfig::get_instance().get_use_task_coloring()) {
         outline_col = _get_task_color(switch_entry->pid);
     }
-#endif
 
     // Prepare text color
     float bg_intensity = _get_color_intensity(rect._color);

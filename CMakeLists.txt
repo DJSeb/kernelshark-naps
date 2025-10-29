@@ -15,14 +15,7 @@ if (NOT CMAKE_BUILD_TYPE)
   set(CMAKE_BUILD_TYPE RelWithDebInfo)
 endif ()
 
-# Detect if the user will be building without a modified KernelShark source
-if (_UNMODIFIED_KSHARK)
-  message("[INFO] Detected unmodified KernelShark source build argument.\n \
-           The plugin will omit task colors and couplebreak features.")
-  add_definitions(-D_UNMODIFIED_KSHARK)
-else()
-  message("[INFO] Modified KernelShark source version of software will be built.")
-endif()
+message("[INFO] Modified KernelShark source version of software will be built.")
 
 # Build the plugin itself
 add_subdirectory("./src")

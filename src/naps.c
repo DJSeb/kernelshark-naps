@@ -16,9 +16,7 @@
 #include "libkshark-plot.h"
 #include "libkshark-plugin.h"
 #include "libkshark-tepdata.h"
-#ifndef _UNMODIFIED_KSHARK
 #include "libkshark-couplebreak.h"
-#endif
 
 // Plugin header
 #include "naps.h"
@@ -174,7 +172,6 @@ static void _select_events(struct kshark_data_stream* stream,
     if (entry->event_id == nr_ctx->sswitch_event_id) {
         kshark_data_container_append(nr_ctx_collected_events, entry, (int64_t)-1);
     } else if (entry->event_id == nr_ctx->waking_event_id) {
-#ifndef _UNMODIFIED_KSHARK
         if (stream->couplebreak_on) {
             // Couplebreak target events do not need to be additionally processed.
             // While not necessary to store the pid, as the entry will be accessible
@@ -186,9 +183,6 @@ static void _select_events(struct kshark_data_stream* stream,
         } else {
             waking_evt_tep_processing(nr_ctx, stream, rec, entry);
         }
-#else
-        waking_evt_tep_processing(nr_ctx, stream, rec, entry);
-#endif
     }
 }
 
@@ -233,14 +227,10 @@ int KSHARK_PLOT_PLUGIN_INITIALIZER(struct kshark_data_stream* stream) {
 
     nr_ctx->sswitch_event_id = kshark_find_event_id(stream, "sched/sched_switch");
 
-#ifndef _UNMODIFIED_KSHARK
     int swaking_id = kshark_find_event_id(stream, "sched/sched_waking");
 
     nr_ctx->waking_event_id = (stream->couplebreak_on) ?
         COUPLEBREAK_SWT_ID : swaking_id;
-#else
-    nr_ctx->waking_event_id = kshark_find_event_id(stream, "sched/sched_waking");
-#endif
 
     kshark_register_event_handler(stream, nr_ctx->sswitch_event_id, _select_events);
     kshark_register_event_handler(stream, nr_ctx->waking_event_id, _select_events);

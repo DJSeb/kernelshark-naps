@@ -1,3 +1,6 @@
+# IMPORTANT NOTICE
+Documentation, both user and technical is heavily outdated and will be fixed in the future.
+
 # Project Overview
 
 **Naps** (also referred to as naps or just Plugin) is a plugin for the trace-cmd data visualiser KernelShark. Nap, in
@@ -35,8 +38,6 @@ sched_events plugin, which only visualises switch-to-switch or waking-to-switch 
   allow it to be displayed in the task plot - otherwise there wouldn't be a waking event entry to connect the switch
   to, as waking entries by default belong to the task waking another (it is its work). This may be a major source of
   incompatiblity with other plugins and **using couplebreak is suggested**.
-- Plugin may be built to work with unmodified KernelShark, but compatibility with other plugins, especially
-  sched_events, will be sacrificed.
 - Plugin offers an task-like coloring version, which will change the top and bottom outline of nap rectangles,
   to be of the same color as the task owning said rectangle. This option has to be turned on in the configuration
   upon each plugin load, as it is not persistent. It couldn't be hardwired into the code due to issues with session
