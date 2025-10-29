@@ -1,6 +1,5 @@
-# Navigation
-Main branch is really only here because of technicalities, it is advised to pick from an actual release branch.
-Main just follows `release-unmodified`.
+# IMPORTANT NOTICE
+Documentation, both user and technical is heavily outdated and will be fixed in the future.
 
 # Project Overview
 
