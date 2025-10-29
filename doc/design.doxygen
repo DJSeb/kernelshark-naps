@@ -1,0 +1,77 @@
+/**
+ * @file design.doxygen
+ * @version 0.1
+ * @date 2025-03-25
+ * @version 1.0
+ * @copyright Copyright (C) 2025, David Jaromír Šebánek <djsebofficial@gmail.com>
+ * 
+ * @page design Design
+ * @section structure Structure
+ * Below is a description of the design of the Naps plugin.
+ * There is almost no big architecture to speak of, as the plugin is quite simple.
+ * 
+ * Plugin is composed of three main parts - the configuration, the nap rectangles and the plugin logic
+ * itself.
+ * 
+ * @subsection config Configuration
+ * The configuration is a C++ class which holds three main configuration variables of the plugin.
+ * 
+ * 1. At which level of entries visible will naps be visualised.
+ * 2. Whether to use task coloring of nap rectangle's outlines to be of the same color as a task is in a
+ * KernelShark graph.
+ * 3. Static pointer to the main window of KernelShark, used for quick access to that window. This variable is never
+ * changed, only initialized.
+ * 
+ * The object of this class can be only one an is globally accessible - both characteristics made true
+ * by use of the (Meyers) Singleton design pattern. Because of this, every part of the plugin can access
+ * the configuration, but only for reading. Modifying the configuration is done by the
+ * configuration dialog.
+ * 
+ * The configuration dialog is a Qt widget, child of the main window of KernelShark.
+ * Only through its GUI is the user able to change the configuration. The only thing that cannot be changed is
+ * the pointer to the main window, as it is set only once, when the plugin is loaded.
+ * 
+ * The configuration window is a class friend of the configuration, which allows for intimate manipulation of
+ * configurations private fields - exactly the mechanism which allows only the configuration dialog to change the
+ * configuration. The window is easily accessible through the Tools submenu of KernelShark's main window.
+ * It's construction is quite long, broken up into several private setup functions, which are called in the constructor.
+ * This approach improves constructor's readability and allows for easy modification of only one stage of construction.
+ * 
+ * @subsection nap_rectangles Nap Rectangles
+ * The nap rectangles are the main visualisation of the plugin. They are drawn between the relevant entries in the graph.
+ * They are only a simple collection of shapes and text, which cannot be interacted with. Their only somewhat complicated
+ * function is the constructor and the private overriden _draw function, however that one only really determines the
+ * order in which to draw the nap rectangles' components. The constructor mainly deals with positioning of its elements,
+ * as they themselves are usually given to the constructor as arguments, along with their color.
+ * 
+ * The rectangles also hold two pointers, both pointing to the start and end entry. These are only ever used as observers,
+ * never changing anything. They are held to be able to reposition the rectangle when the entries move and to get
+ * the previous state of the start entry, i.e. some sched/sched_switch. The observers, true to their name, have no
+ * connection to the lifetime of the observed objects and are nulled when the rectangle is destroyed.
+ * 
+ * @subsection plugin_logic Plugin Logic
+ * Plugin logic is a bit of an umbrella term for the objects and functions present in the naps.h, naps.c an Naps.cpp files.
+ * The C files have one main component, the plugin context structure, which is used mainly during plugin's load.
+ * It serves as a structured collection of variables used by the plugin across different parts of the code. One could
+ * think of it as a collection of "global" plugin-specific variables. KernelShark plugins are all expected to have
+ * such context structure, as there are predefined macros for declaring and defining common functionalities with this
+ * structure in mind.
+ * 
+ * The C files mainly serve as a bridge connecting KernelShark and the plugin, choosing which events are relevant for the
+ * plugin and if there should be some preprocessing done on them. There is also the definition of the font to be used by
+ * the plugin. KernelShark provides event handlers for drawing on the plot or for event processing during loading -
+ * these are used with callback functions defined by the user, some of which may be defined in the C++ portion.
+ * 
+ * The C++ file Naps.cpp is a sort of extension of the C definition file and a hub between the C code and other C++ code.
+ * There are also helper static functions, which simplify implementation and improve readability without worsening the API.
+ * Example: the C header files declares a function for drawing. Nap rectangles are a C++ object, as they are composed of
+ * KernelShark's plot objects, which are also written in C++. Things like getting the right color for an object, the right
+ * text, these are encapsulated in their helper functions, used in the drawing function. The drawing function is therefore
+ * defined in Naps.cpp, where C++ is free to use its types and objects, while the C part can use the function pointer as
+ * an argument.
+ * 
+ * There is also a small amount of static variables (like a pointer to the main window, previous state to color mapping or
+ * previous state abbreviation to full name mapping), but they are used sparingly and only when it is ensured they can be
+ * static. There are also a few constexpr constants, but only in functions that need them and just writing a number looks
+ * too arbitrary.
+ */

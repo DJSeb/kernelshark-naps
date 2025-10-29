@@ -1,0 +1,26 @@
+/*!
+ * @file mainpage.doxygen
+ * @date 2025-03-25
+ * @version 1.0
+ * @copyright Copyright (C) 2025, David Jaromír Šebánek <djsebofficial@gmail.com>
+ * 
+ * @mainpage
+ * @section foreword Foreword
+ *
+ * This is the API documentation for the Naps plugin. For user documentation, seek out "user-manual" markdown or PDF
+ * document elsewhere. If **design documentation** is desired, navigate to it via the navigation menu.
+ *
+ * Plugin was designed as a standalone shared library and not as a library to use in other projects. As such
+ * this kind of use of this plugin is discouraged, but not banned - after all, if someone is brave enough, they can
+ * utilise anything.
+ *
+ * @section nondocced Private and static variables, members and functions
+ * This documentation does not include any private or static methods defined by the plugin - as such, if there is a
+ * reader hungry for more documentation, they should look at the source code files and read through them themselves.
+ * The files include documentation mainly in the implementation files, mimicking KernelShark's style of documentation.
+ * However, unlike KernelShark, every static and private function or variable or object's member is documented, all in
+ * the same manner as anything to be found in this documentation. Additionally, non-documentation comments can
+ * be found there, detailing some more obsure computation steps.
+ *
+ * As such, reading through the source code is recommended for a complete understanding.
+ */
