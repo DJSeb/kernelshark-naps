@@ -1,3 +1,7 @@
+# Navigation
+Main branch is really only here because of technicalities, it is advised to pick from an actual release branch.
+Main just follows `release-unmodified`.
+
 # Project Overview
 
 **Naps** (also referred to as naps or just Plugin) is a plugin for the trace-cmd data visualiser KernelShark. Nap, in
