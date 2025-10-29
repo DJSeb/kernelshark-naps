@@ -46,16 +46,6 @@ NapConfig& NapConfig::get_instance() {
 int32_t NapConfig::get_histo_limit() const
 { return _histo_entries_limit; }
 
-#ifndef _UNMODIFIED_KSHARK // Task coloring
-/**
- * @brief Gets whether to use task-like outline coloring for nap rectangles.
- * 
- * @return Whether to use task-like outline coloring for nap rectangles. 
- */
-bool NapConfig::get_use_task_coloring() const
-{ return _use_task_coloring; }
-#endif
-
 // Window
 
 // Member functons
@@ -70,10 +60,6 @@ NapConfigWindow::NapConfigWindow()
     : QWidget(NapConfig::main_w_ptr),
     _histo_label("Entries on histogram until nap rectangles appear: "),
     _histo_limit(this),
-#ifndef _UNMODIFIED_KSHARK // Task coloring
-    _task_col_label("Use task coloring: "),
-    _task_col_btn(this),
-#endif
     _close_button("Close", this),
     _apply_button("Apply", this)
 {
@@ -84,9 +70,7 @@ NapConfigWindow::NapConfigWindow()
     setMaximumHeight(300);
 
     setup_histo_section();
-#ifndef _UNMODIFIED_KSHARK // Task coloring
-    setup_tasklike_coloring();
-#endif
+    
     // Connect endstage buttons to actions
     setup_endstage();
 
@@ -107,9 +91,6 @@ void NapConfigWindow::load_cfg_values() {
     NapConfig& cfg = NapConfig::get_instance();
 
     _histo_limit.setValue(cfg._histo_entries_limit);
-#ifndef _UNMODIFIED_KSHARK // Task coloring
-    _task_col_btn.setChecked(cfg._use_task_coloring);
-#endif
 }
 
 /**
@@ -124,9 +105,6 @@ void NapConfigWindow::update_cfg() {
     NapConfig& cfg = NapConfig::get_instance();
 
     cfg._histo_entries_limit = _histo_limit.value();
-#ifndef _UNMODIFIED_KSHARK // Task coloring
-    cfg._use_task_coloring = _task_col_btn.isChecked();
-#endif
 
     // Display a successful change dialog
     // We'll see if unique ptr is of any use here
@@ -158,25 +136,6 @@ void NapConfigWindow::setup_histo_section() {
     _histo_layout.addWidget(&_histo_limit);
 }
 
-#ifndef _UNMODIFIED_KSHARK // Task coloring
-/**
- * @brief Sets up the "use task coloring" checkbox, label and layout.
- * 
- * @note Function is also dependent on the configuration
- * 'NapConfig' singleton.
- */
-void NapConfigWindow::setup_tasklike_coloring() {
-    // Configuration access here
-    NapConfig& cfg = NapConfig::get_instance();
-
-    _task_col_btn.setChecked(cfg._use_task_coloring);
-
-    _task_col_layout.addWidget(&_task_col_label);
-    _task_col_layout.addStretch();
-    _task_col_layout.addWidget(&_task_col_btn);
-}
-#endif
-
 /**
  * @brief Sets up the Apply and Close buttons by putting
  * them into a layout and assigning actions on pressing them.
@@ -200,10 +159,6 @@ void NapConfigWindow::setup_layout() {
 
     // Add all control elements
     _layout.addLayout(&_histo_layout);
-#ifndef _UNMODIFIED_KSHARK // Task coloring
-    _layout.addStretch();
-    _layout.addLayout(&_task_col_layout);
-#endif
     _layout.addStretch();
     _layout.addLayout(&_endstage_btns_layout);
 

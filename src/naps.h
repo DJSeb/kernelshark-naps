@@ -51,7 +51,7 @@ struct plugin_naps_context {
     */
     int waking_event_id;
 
-    // Tep processing (effective only when couplebreak is OFF in a stream.)
+    // Tep processing.
 
     /**
      * @brief Page handle used to parse the trace event data.

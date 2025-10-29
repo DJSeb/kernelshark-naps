@@ -5,8 +5,7 @@
  * @brief   Declarations & definitions of plugin's drawable nap rectangle class.
  * 
  * @note    Nap := space in the histogram between a sched_switch and
- *          the closest next sched_waking or couplebreak/sched_waking[target]
- *          event in the task plot.
+ *          the closest next sched_waking event in the task plot.
  * @note    Definitions in `NapRectangle.cpp`.
 */
 
@@ -27,8 +26,7 @@
 /**
  * @brief Represents a rectangle that visualises the "nap"
  * of a task - the space between a sched_switch and its
- * closest next sched/sched_waking or
- * couplebreak/sched_waking[target].
+ * closest next sched/sched_waking.
  * 
  * It cannot be interacted with, only drawn and looked at.
  * 

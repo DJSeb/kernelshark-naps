@@ -6,8 +6,7 @@
  *          functions.
  * 
  * @note    Nap := space in the histogram between a sched_switch and
- *          the closest next sched_waking or couplebreak/sched_waking[target]
- *          event in the task plot.
+ *          the closest next sched_waking event in the task plot.
 */
 
 // C++

@@ -12,10 +12,7 @@ sched_events plugin, which only visualises switch-to-switch or waking-to-switch 
 
 ## Features
 
-- Plugin will visualise naps as rectangles between events _sched/sched_switch_ & either _sched/sched_waking_ or
-  _couplebreak/sched_waking\[target\]_. This is chosen during plugin's load per data stream, by detection of
-  couplebreak's on/off status in each stream. If couplebreak is inactive, the sched-generated event will be used,
-  otherwise couplebreak's generated target event will.
+- Plugin will visualise naps as rectangles between events _sched/sched_switch_ & either _sched/sched_waking_.
 - Plugin will color the nap rectangles using information from previous state of the task and its PID. PID-color is
   determined internally by KernelShark, Plugin only accesses it and uses it for the rectangle's outlines, if the task
   coloring option was checked in Plugin's configuration (only for custom KernelShark). Color from the previous state
@@ -31,12 +28,7 @@ sched_events plugin, which only visualises switch-to-switch or waking-to-switch 
   - Zombie -> Purple
 - Plugin will also write into the rectangle, if it is wide enough, the full name and abbreviation of the previous
   state of the task. The text will be either black or white, chosen via color intensity of the background color.
-- If couplebreak is OFF in the loaded stream, Plugin will change the owner PID of a _sched/sched_waking_ entry to
-  allow it to be displayed in the task plot - otherwise there wouldn't be a waking event entry to connect the switch
-  to, as waking entries by default belong to the task waking another (it is its work). This may be a major source of
-  incompatiblity with other plugins and **using couplebreak is suggested**.
-- Plugin may be built to work with unmodified KernelShark, but compatibility with other plugins, especially
-  sched_events, will be sacrificed.
+- Plugin is exclusive with sched_events plugin and if both are enabled, none of them will work correctly.
 - Plugin offers an task-like coloring version, which will change the top and bottom outline of nap rectangles,
   to be of the same color as the task owning said rectangle. This option has to be turned on in the configuration
   upon each plugin load, as it is not persistent. It couldn't be hardwired into the code due to issues with session

@@ -16,9 +16,6 @@
 #include "libkshark-plot.h"
 #include "libkshark-plugin.h"
 #include "libkshark-tepdata.h"
-#ifndef _UNMODIFIED_KSHARK
-#include "libkshark-couplebreak.h"
-#endif
 
 // Plugin header
 #include "naps.h"
@@ -110,10 +107,6 @@ KS_DEFINE_PLUGIN_CONTEXT(struct plugin_naps_context , _nr_free_ctx);
  * @param rec: Pointer to the tep record of the entry
  * @param entry: Pointer KernelShark event entry
  * 
- * @note This function should be called only if couplebreak is disabled
- * in a KernelShark stream, as it attempts to basically use 
- * (in couplebreak terms) an origin entry as a target entry
- * for visualization purposes.
  * @warning Incompatiblity - this function may make some plugins
  * expecting certain values in entries to be incompatible with
  * this plugin, e.g. sched_events plugin.
@@ -157,8 +150,6 @@ static void waking_evt_tep_processing(struct plugin_naps_context* ctx,
  * 
  * @note Supported events are: `sched/sched_switch`,
  *                             `sched/sched_waking`.
- * However, if couplebreak feature is present, waking events detected change to
- * `couplebreak/sched_waking[target]`.
 */
 static void _select_events(struct kshark_data_stream* stream,
     [[maybe_unused]] void* rec, struct kshark_entry* entry) {
@@ -174,29 +165,13 @@ static void _select_events(struct kshark_data_stream* stream,
     if (entry->event_id == nr_ctx->sswitch_event_id) {
         kshark_data_container_append(nr_ctx_collected_events, entry, (int64_t)-1);
     } else if (entry->event_id == nr_ctx->waking_event_id) {
-#ifndef _UNMODIFIED_KSHARK
-        if (stream->couplebreak_on) {
-            // Couplebreak target events do not need to be additionally processed.
-            // While not necessary to store the pid, as the entry will be accessible
-            // as well, it is stored for consistency with the non-couplebreak case.
-            // Moreover, if a plugin decided to change the PID of couplebreak
-            // entries, this helps the naps plugin be consistent with the data it saw
-            // during load and which it will use during operation.
-            kshark_data_container_append(nr_ctx_collected_events, entry, entry->pid);
-        } else {
-            waking_evt_tep_processing(nr_ctx, stream, rec, entry);
-        }
-#else
         waking_evt_tep_processing(nr_ctx, stream, rec, entry);
-#endif
     }
 }
 
 /** 
  * @brief Initializes the plugin's context and registers handlers of the
- * plugin. This is also the function where the plugin decides, based on
- * current couplebreak status, if it will use `sched/sched_waking` events
- * or `couplebreak/sched_waking[target]` events.
+ * plugin. 
  * 
  * @param stream: KernelShark's data stream for which to initialize the
  * plugin
@@ -233,14 +208,7 @@ int KSHARK_PLOT_PLUGIN_INITIALIZER(struct kshark_data_stream* stream) {
 
     nr_ctx->sswitch_event_id = kshark_find_event_id(stream, "sched/sched_switch");
 
-#ifndef _UNMODIFIED_KSHARK
-    int swaking_id = kshark_find_event_id(stream, "sched/sched_waking");
-
-    nr_ctx->waking_event_id = (stream->couplebreak_on) ?
-        COUPLEBREAK_SWT_ID : swaking_id;
-#else
     nr_ctx->waking_event_id = kshark_find_event_id(stream, "sched/sched_waking");
-#endif
 
     kshark_register_event_handler(stream, nr_ctx->sswitch_event_id, _select_events);
     kshark_register_event_handler(stream, nr_ctx->waking_event_id, _select_events);

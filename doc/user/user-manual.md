@@ -11,22 +11,13 @@ Figure 1.
 
 - CMake of version at least *3.1.2*
 - KernelShark and its dependencies
-  - version *2.4.0-couplebreak* and higher for custom KernelShark
   - version *2.3.2* for unmodified KernelShark
 - Doxygen for documentation
 
 ## Compatibility
 
-Plugin is compatible with KernelShark's **custom** version *2.4.0-couplebreak* and higher.
-Unmodified KernelShark usage is achievable through a build argument, but **discouraged**, as the
-custom versions improve compatibility with other plugins.
-
-With couplebreak on (this necessitates modified KernelShark), the plugin is fully compatible with every default 
-KernelShark plugin. With couplebreak off, *sched_events* plugin is incompatible. In general, if any plugin changes 
+Plugin *sched_events* is incompatible with this one. In general, if any plugin changes 
 event's PID data during data stream loading, this plugin will be incompatible with it.
-
-If using unmodified KernelShark, couplebreak cannot be turned on and nap rectangles will not have the option to
-have their outlines be the same color as the owner task of a sched/sched_switch event.
 
 No other dependencies are necessary, except the standard libraries of C and C++ and Doxygen for documentation.
 
@@ -36,7 +27,6 @@ No other dependencies are necessary, except the standard libraries of C and C++ 
    [README](../../README.md)), if not already present).
 2. Run `cmake ..` command (if the main `CMakeLists.txt` file isn't in the parent folder, provide cmake with its
    valid location).
-   - If using an unmodified KernelShark copy, add `-D_UNMODIFIED_KSHARK=1` to the command.
    - If **Doxygen documentation** is desired, include `-D_DOXYGEN_DOC=1` in the command.
    - If **traceevent header files** aren't in `/usr/include`, specify so via `-D_TRACEEVENT_INCLUDE_DIR=[PATH]`, where
     `[PATH]` is replaced by the path to the header files.
@@ -68,7 +58,7 @@ Use `make clean` to remove built binaries.
 1. Ensure all source files (`.c`, `.cpp`, `.h`) of Naps are in the `src/plugins` subdirectory of your KernelShark 
    project directory.
 2. Ensure the `CMakeLists.txt` file in said subdirectory contains instructions for building the plugin (copy the style 
-   of other Qt-using GUI plugins). Adjust the build instructions if `_UNMODIFIED_KSHARK` build is desired.
+   of other Qt-using GUI plugins).
 3. Build KernelShark (plugins are built automatically).
 4. (**Installation**) Start KernelShark. Plugins built this way will be loaded automatically. If that for some reason 
    failed, look for the SO as for any other default-built KernelShark plugin, again in GUI or via the CLI.
@@ -167,9 +157,6 @@ A few recommendations of usage by the author for the smoothest user experience.
 Always preload Naps before loading a session. It can save the program from nasty surprises.
 
 If having two versions of the plugin is desired, put them into different build directories.
-
-It is recommended to turn on couplebreak in KernelShark to allow greater compatiblity with other
-plugins, especially sched_events.
 
 It is recommended to not set the histogram limit in the configuration too high as to not make the plugin use
 too much memory with many nap rectangles being present.

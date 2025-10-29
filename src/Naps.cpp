@@ -64,40 +64,6 @@ static void config_show([[maybe_unused]] KsMainWindow*) {
     cfg_window->show();
 }
 
-#ifndef _UNMODIFIED_KSHARK // Task coloring
-/**
- * @brief Gets the color of the task used by KernelShark for that task.
- * Used during nap rectangle creation to figure out the outline of the rectangle.alignas
- * Such outlines are the only color signal to the user to which task the nap belongs.
- * Slightly useful if the user accidentally scrolls to another task, the color can
- * help recognize this situation.
- * 
- * @param pid Process ID of the task, whose color we wish to get
- * @return KernelShark's Color object holding a copy of the task's color
- * 
- * @note  Function also depends on the configuration `NapConfig` singleton.
- */
-static const KsPlot::Color _get_task_color(int pid) {
-    // Fail-safe color, all white (makes the rectangle seem
-    // thinner, which is a small signal that the task color wasn't found).
-    static const KsPlot::Color DEFAULT_COLOR
-        { (uint8_t)256, (uint8_t)256, (uint8_t)256};
-    
-    KsPlot::Color result_color = DEFAULT_COLOR;
-    // Configuration access here.
-    KsTraceGraph* graph = NapConfig::main_w_ptr->graphPtr();
-    // A journey to get the color of the task.
-    const KsPlot::ColorTable& pid_color_table = graph->glPtr()->getPidColors();
-    bool pid_color_exists = static_cast<bool>(pid_color_table.count(pid));
-
-    if (pid_color_exists) {
-        result_color = pid_color_table.at(pid);
-    }
-
-    return result_color;
-}
-#endif
-
 /**
  * @brief Returns either black if the background color's intensity is too great,
  * otherwise returns white. Limit to intensity is `128.0`.
@@ -211,13 +177,6 @@ static NapRectangle* _make_nap_rect(std::vector<const KsPlot::Graph*> graph,
 
     // Prepare outline color
     KsPlot::Color outline_col = rect._color;
-    
-#ifndef _UNMODIFIED_KSHARK // Task coloring
-    // Configuration access here.
-    if(NapConfig::get_instance().get_use_task_coloring()) {
-        outline_col = _get_task_color(switch_entry->pid);
-    }
-#endif
 
     // Prepare text color
     float bg_intensity = _get_color_intensity(rect._color);
@@ -235,8 +194,7 @@ static NapRectangle* _make_nap_rect(std::vector<const KsPlot::Graph*> graph,
  * KernelShark's interval plotting API.
  * 
  * @note Naps-relevant entries are: `sched/sched_switch`
- * `sched/sched_waking` OR `couplebreak/sched_waking[target]`. These are
- * chosen between in the C part based on a stream's setting of couplebreak.
+ * `sched/sched_waking`.
  * 
  * @param argVCpp: The C++ arguments of the drawing function of the plugin
  * @param plugin_data: Input location for the container of the event's data
